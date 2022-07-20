@@ -333,6 +333,9 @@
 					if(intersects[0] != undefined && intersects[0].object.parent.type === "Group") isIntersected = true;
 
 					if (isIntersected) {
+						document.getElementById("tooltip").style.display = "inline-block";
+						document.getElementById("tooltip").style.left = event.clientX+50+"px"; 
+						document.getElementById("tooltip").style.top = event.clientY-25+"px";
 						if(intersects[0].object.parent.parent.type == "Group")
 							document.getElementById("tooltip").innerHTML = intersects[0].object.parent.parent.name; // cerise
 						else {
