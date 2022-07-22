@@ -27,7 +27,7 @@
 			<button id="remove-boule">Remove</button>
 			
 			<br/>
-			<span>Cerise :</span><input type="checkbox" style="position: relative; top: 3px;"></input>
+			<span>Cerise :</span><input id="switch-cerise" type="checkbox" style="position: relative; top: 3px;"></input>
 			
 			<br/><br/>
 			<b>Menu</b><br/>
@@ -75,6 +75,8 @@
 				{name:"Citron vert", r:0.487 , g:0.976 ,b:0.100}
 				];
 				
+			var nb_boule = 1;
+			
 			init();
 			animate();
 
@@ -84,7 +86,7 @@
 				document.body.appendChild( container );
 
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.25, 1000 );
-				camera.position.set( 0.0, 0.0, 4. );
+				camera.position.set( 0.0, 1.0, 4. );
 
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0xf0f0f0 );
@@ -167,8 +169,8 @@
 					cerise = gltf.scene;
 					cerise.name = "Cerise";
 					gltf.scene.scale.set(0.45, 0.45, 0.45);
-					gltf.scene.position.set(0, 1, 0);
-					scene.add( cerise );
+					gltf.scene.position.set(0, 0.38, 0);
+					//scene.add( cerise );
 					render();
 					} );
 				
@@ -267,7 +269,7 @@
 				//controls.addEventListener('change', render);
 				//controls.minDistance = 2;
 				//controls.maxDistance = 10;
-				var nb_boule = 1;
+				
 				
 				stats = new Stats();
 				container.appendChild( stats.dom );
@@ -291,7 +293,7 @@
 							nb_boule = 3;
 						document.getElementById("nb-boule").innerHTML = nb_boule;
 					}
-					updateBoulesPosition(select_contenant, boule1, boule2, boule3, boule4, boule5);
+					updateBoulesPosition(select_contenant, boule1, boule2, boule3, boule4, boule5, cerise);
 				} );
 				
 				document.getElementById("add-boule").addEventListener("click", function () {
@@ -314,7 +316,41 @@
 						
 					nb_boule++;
 					document.getElementById("nb-boule").innerHTML = nb_boule;
-					updateBoulesPosition(select_contenant, boule1, boule2, boule3, boule4, boule5);
+					updateBoulesPosition(select_contenant, boule1, boule2, boule3, boule4, boule5, cerise);
+				} );
+				
+				document.getElementById("remove-boule").addEventListener("click", function () {
+					var select_contenant = document.getElementById("contenant").value;
+					if(select_contenant == "Cornet") {
+						if(nb_boule == 1) return;
+					}
+					else { // Coupe
+						if(nb_boule == 1) return;
+					}
+					
+					if(nb_boule == 2)
+						scene.remove(boule2);
+					if(nb_boule == 3)
+						scene.remove(boule3);
+					if(nb_boule == 4)
+						scene.remove(boule4);	
+					if(nb_boule == 5)
+						scene.remove(boule5);
+						
+					nb_boule--;
+					document.getElementById("nb-boule").innerHTML = nb_boule;
+					updateBoulesPosition(select_contenant, boule1, boule2, boule3, boule4, boule5, cerise);
+				} );
+				
+				document.getElementById("switch-cerise").addEventListener("change", function () {
+					if(this.checked)
+						scene.add(cerise);
+					else {
+						scene.remove(cerise);
+					}
+					
+					var select_contenant = document.getElementById("contenant").value;
+					updateBoulesPosition(select_contenant, boule1, boule2, boule3, boule4, boule5, cerise);
 				} );
 				
 				// CLICK
@@ -397,6 +433,7 @@
 					
 				});
 				
+				
 			}
 			
 			function onPointerMove( event ) {
@@ -426,12 +463,15 @@
 				return taste;
 			}
 			
-			function updateBoulesPosition(type_contenant, boule1, boule2, boule3, boule4, boule5) {
+			function updateBoulesPosition(type_contenant, boule1, boule2, boule3, boule4, boule5, cerise) {
 				console.log("update_pos");
 				if(type_contenant == "Cornet") {
+					
 					boule1.position.set(0.0, 0.2, 0.0);
 					boule2.position.set(0.0, 0.5, 0.0);
 					boule3.position.set(0.0, 0.8, 0.0);
+					console.log(cerise);
+					cerise.position.set(0.0, 0.08+(0.30*nb_boule), 0.0);
 				}
 				else if(type_contenant == "Coupe") {
 					boule1.position.set(0.23, 0.2, -0.23);
